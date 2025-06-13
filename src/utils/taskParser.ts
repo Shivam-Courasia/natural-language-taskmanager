@@ -141,14 +141,14 @@ function formatDate(dateString: string): string {
   if (dayMonthMatch) {
     const month = dayMonthMatch[1];
     const day = dayMonthMatch[2];
-    return `${day} ${month.charAt0).toUpperCase() + month.slice(1).toLowerCase()}`;
+    return `${day} ${month.charAt(0).toUpperCase() + month.slice(1).toLowerCase()}`;
   }
 
   return dateString;
 }
 
 function getNextWeekday(dayName: string): Date {
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   const targetDay = days.indexOf(dayName.toLowerCase());
   
   if (targetDay === -1) return new Date();

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { ArrowLeft, Plus, User, Calendar as CalendarIcon } from 'lucide-react';
 import { TaskCard } from './TaskCard';
+import { TranscriptParser } from './TranscriptParser';
 import { parseNaturalLanguageTask } from '@/utils/taskParser';
-import { Task } from '@/types/task';
+import { Task, ParsedTask } from '@/types/task';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -52,6 +52,17 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
     setQuickAssignee('');
     setQuickDate(undefined);
     setShowAssigneeInput(false);
+  };
+
+  const handleTasksFromTranscript = (parsedTasks: ParsedTask[]) => {
+    const newTasks: Task[] = parsedTasks.map(parsedTask => ({
+      id: `${Date.now()}-${Math.random()}`,
+      ...parsedTask,
+      completed: false,
+      createdAt: new Date()
+    }));
+    
+    setTasks([...newTasks, ...tasks]);
   };
 
   const handleUpdateTask = (id: string, updates: Partial<Task>) => {
@@ -102,6 +113,9 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Transcript Parser Section */}
+        <TranscriptParser onTasksExtracted={handleTasksFromTranscript} />
+
         {/* Add Task Section */}
         <Card className="mb-8 shadow-lg border-0">
           <CardHeader className="pb-4">
@@ -197,7 +211,7 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
               {/* Current selections display */}
               {(quickAssignee || quickDate) && (
                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg animate-fade-in">
-                  <span className="font-medium">Quick selections: </span>
+                  <span className="font-medium">Quick selections: </span> 
                   {quickAssignee && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 mr-2">
                       <User className="w-3 h-3 mr-1" />

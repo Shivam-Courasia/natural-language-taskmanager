@@ -137,11 +137,11 @@ function formatDate(dateString: string): string {
   }
 
   // Handle "June 20th" format
-  const dayMonthMatch = dateString.match/(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})(st|nd|rd|th)?/i;
+  const dayMonthMatch = dateString.match(/(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})(st|nd|rd|th)?/i);
   if (dayMonthMatch) {
     const month = dayMonthMatch[1];
     const day = dayMonthMatch[2];
-    return `${day} ${month.charAt(0).toUpperCase() + month.slice(1).toLowerCase()}`;
+    return `${day} ${month.charAt0).toUpperCase() + month.slice(1).toLowerCase()}`;
   }
 
   return dateString;

@@ -12,6 +12,23 @@ A modern task management application built with React, TypeScript, and shadcn/ui
 - 🎯 Form validation with React Hook Form and Zod
 - 📊 Beautiful charts and data visualization with Recharts
 - 🔄 State management with React Query
+- 🗣️ **AI Transcript Parser**: Automatically extract tasks from meeting transcripts using natural language processing.
+
+## AI Transcript Parser
+
+The AI Transcript Parser feature allows users to paste meeting transcripts into the application, and it will automatically identify and extract tasks, assignees, due dates, and priorities. This streamlines the task creation process and ensures no action items are missed.
+
+### How to use:
+1. Navigate to the "AI Transcript Parser" section.
+2. Paste your meeting transcript into the provided text area.
+3. Click "Extract Tasks" to see a list of identified tasks.
+4. Review the extracted tasks and click "Add All Tasks" to add them to your task list.
+
+### Screenshots
+
+![AI Transcript Parser Screenshot 1](https://github.com/Shivam-Courasia/natural-language-taskmanager/blob/main/public/images/transcript-parser-1.png)
+![AI Transcript Parser Screenshot 2](https://github.com/Shivam-Courasia/natural-language-taskmanager/blob/main/public/images/transcript-parser-2.png)
+![AI Transcript Parser Screenshot 3](https://github.com/Shivam-Courasia/natural-language-taskmanager/blob/main/public/images/transcript-parser-3.png)
 
 ## Tech Stack
 

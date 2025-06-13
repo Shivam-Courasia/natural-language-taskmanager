@@ -144,6 +144,7 @@ export const TranscriptParser = ({ onTasksExtracted }: TranscriptParserProps) =>
             <li>Include deadlines (e.g., "by tomorrow", "by Friday 5pm")</li>
             <li>Add priorities when needed (P1, P2, P3, P4)</li>
             <li>Use action words (e.g., "take care of", "review", "finish")</li>
+            <li>Use full stop between tasks (e.g., Aman complete landing page by 10pm tomorrow. Rajeev you take care of client follow-up by Wednesday.)</li>
           </ul>
         </div>
       </CardContent>

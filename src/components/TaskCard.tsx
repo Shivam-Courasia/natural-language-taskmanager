@@ -5,16 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Calendar, User, Clock, CheckCircle } from 'lucide-react';
+import { Edit, Calendar, User, Clock, CheckCircle, Trash2 } from 'lucide-react';
 import { Task } from '@/types/task';
 
 interface TaskCardProps {
   task: Task;
   onUpdate: (id: string, updates: Partial<Task>) => void;
   onDelete: (id: string) => void;
+  onComplete: (id: string) => void;
 }
 
-export const TaskCard = ({ task, onUpdate, onDelete }: TaskCardProps) => {
+export const TaskCard = ({ task, onUpdate, onDelete, onComplete }: TaskCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState(task);
 
@@ -26,6 +27,10 @@ export const TaskCard = ({ task, onUpdate, onDelete }: TaskCardProps) => {
   const handleCancel = () => {
     setEditedTask(task);
     setIsEditing(false);
+  };
+
+  const handleComplete = () => {
+    onComplete(task.id);
   };
 
   const getPriorityColor = (priority: string) => {
@@ -172,11 +177,13 @@ export const TaskCard = ({ task, onUpdate, onDelete }: TaskCardProps) => {
                 onClick={() => onDelete(task.id)}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
+                <Trash2 className="w-4 h-4 mr-1" />
                 Delete
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={handleComplete}
                 className="text-green-600 hover:text-green-700 hover:bg-green-50"
               >
                 <CheckCircle className="w-4 h-4 mr-1" />

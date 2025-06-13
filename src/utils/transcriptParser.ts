@@ -12,30 +12,33 @@ export function parseTranscript(transcript: string): ParsedTask[] {
     .map(s => s.trim())
     .filter(s => s.length > 0);
   
+  console.log('Split sentences:', sentences);
+  
   for (const sentence of sentences) {
-    // Look for task patterns with assignee mentions
+    // Look for task patterns - more flexible patterns
     const taskPatterns = [
-      // "Name you/should/need to/please [action] [details] [by/until] [time]"
-      /(\w+)\s+(?:you\s+)?(?:should\s+|need\s+to\s+|please\s+)?([^.!?]*?)(?:\s+by\s+|\s+until\s+|\s+before\s+)([^.!?]+)/i,
-      // "Name [action] [details] [by/until] [time]"
-      /(\w+)\s+([^.!?]*?)(?:\s+by\s+|\s+until\s+|\s+before\s+)([^.!?]+)/i,
-      // "Name you/should/need to/please [action] [details]" (no explicit deadline)
-      /(\w+)\s+(?:you\s+)?(?:should\s+|need\s+to\s+|please\s+)([^.!?]+)/i,
+      // "Name you/should/need to/please [action] [details] [by/until/at] [time]"
+      /^(\w+)\s+(?:you\s+)?(?:should\s+|need\s+to\s+|please\s+)?(.+?)(?:\s+(?:by|until|before|at)\s+(.+))?$/i,
+      // "Name [action] [details] [by/until/at] [time]"
+      /^(\w+)\s+(.+?)(?:\s+(?:by|until|before|at)\s+(.+))?$/i,
     ];
     
     for (const pattern of taskPatterns) {
       const match = sentence.match(pattern);
+      console.log('Testing pattern against sentence:', sentence, 'Match:', match);
+      
       if (match) {
         const assignee = match[1];
         let taskDescription = match[2]?.trim();
         const deadline = match[3]?.trim();
         
         // Skip if it doesn't look like a task assignment
-        if (!assignee || !taskDescription || taskDescription.length < 5) {
+        if (!assignee || !taskDescription || taskDescription.length < 3) {
+          console.log('Skipping - insufficient data:', { assignee, taskDescription });
           continue;
         }
         
-        // Clean up task description
+        // Clean up task description - remove common prefixes
         taskDescription = taskDescription
           .replace(/^(take\s+care\s+of\s+|take\s+|do\s+|handle\s+|work\s+on\s+)/i, '')
           .trim();
@@ -59,32 +62,37 @@ export function parseTranscript(transcript: string): ParsedTask[] {
         }
         
         const task: ParsedTask = {
-          title: taskDescription,
+          title: taskDescription || 'New Task',
           assignee: assignee,
           dueDate,
           dueTime,
           priority
         };
         
+        console.log('Created task:', task);
         tasks.push(task);
         break; // Found a match for this sentence, move to next
       }
     }
   }
   
-  console.log('Parsed tasks from transcript:', tasks);
+  console.log('Final parsed tasks from transcript:', tasks);
   return tasks;
 }
 
 function parseDeadline(deadline: string): { date: string | null; time: string | null } {
+  console.log('Parsing deadline:', deadline);
+  
   let date: string | null = null;
   let time: string | null = null;
   
-  // Extract time first
+  // Extract time first - improved patterns
   const timePatterns = [
     /\b(\d{1,2}):(\d{2})\s*(am|pm)\b/i,
     /\b(\d{1,2})\s*(am|pm)\b/i,
-    /\b(\d{1,2}):\d{2}\b/
+    /\b(\d{1,2}):\d{2}\b/,
+    /\b(\d{1,2})\s*pm\b/i,
+    /\b(\d{1,2})\s*am\b/i
   ];
   
   for (const pattern of timePatterns) {
@@ -92,11 +100,12 @@ function parseDeadline(deadline: string): { date: string | null; time: string | 
     if (timeMatch) {
       time = timeMatch[0];
       deadline = deadline.replace(pattern, '').trim();
+      console.log('Found time:', time, 'Remaining deadline:', deadline);
       break;
     }
   }
   
-  // Extract date
+  // Extract date - improved patterns
   const datePatterns = [
     /\btomorrow\b/i,
     /\btoday\b/i,
@@ -111,10 +120,17 @@ function parseDeadline(deadline: string): { date: string | null; time: string | 
     const dateMatch = deadline.match(pattern);
     if (dateMatch) {
       date = formatDeadlineDate(dateMatch[0]);
+      console.log('Found date:', date);
       break;
     }
   }
   
+  // If no specific date found but we have remaining text, use it as date
+  if (!date && deadline.trim()) {
+    date = formatDeadlineDate(deadline.trim());
+  }
+  
+  console.log('Parsed deadline result:', { date, time });
   return { date, time };
 }
 
@@ -123,30 +139,32 @@ function formatDeadlineDate(dateString: string): string {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   
-  if (dateString.toLowerCase() === 'today') {
+  const lowerDateString = dateString.toLowerCase();
+  
+  if (lowerDateString === 'today') {
     return today.toLocaleDateString('en-US', { 
       day: 'numeric', 
       month: 'long' 
     });
   }
   
-  if (dateString.toLowerCase() === 'tomorrow') {
+  if (lowerDateString === 'tomorrow') {
     return tomorrow.toLocaleDateString('en-US', { 
       day: 'numeric', 
       month: 'long' 
     });
   }
   
-  if (dateString.toLowerCase() === 'tonight') {
+  if (lowerDateString === 'tonight') {
     return today.toLocaleDateString('en-US', { 
       day: 'numeric', 
       month: 'long' 
     });
   }
   
-  // Handle day names and other formats similar to original parser
+  // Handle day names
   const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  if (dayNames.includes(dateString.toLowerCase())) {
+  if (dayNames.includes(lowerDateString)) {
     const nextDate = getNextWeekday(dateString);
     return nextDate.toLocaleDateString('en-US', { 
       day: 'numeric', 
@@ -155,7 +173,7 @@ function formatDeadlineDate(dateString: string): string {
   }
   
   // Handle "next [day]" format
-  if (dateString.toLowerCase().startsWith('next ')) {
+  if (lowerDateString.startsWith('next ')) {
     const dayName = dateString.split(' ')[1];
     const nextDate = getNextWeekday(dayName);
     return nextDate.toLocaleDateString('en-US', { 
@@ -164,11 +182,12 @@ function formatDeadlineDate(dateString: string): string {
     });
   }
   
+  // Return as-is if no special formatting needed
   return dateString;
 }
 
 function getNextWeekday(dayName: string): Date {
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const targetDay = days.indexOf(dayName.toLowerCase());
   
   if (targetDay === -1) return new Date();

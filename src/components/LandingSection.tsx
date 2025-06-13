@@ -41,9 +41,9 @@ export const LandingSection = ({ onGetStarted }: LandingSectionProps) => {
     <div className="min-h-screen overflow-hidden">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute top-0 -left-40 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-40 left-20 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute top-0 -left-40 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute -bottom-40 left-20 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
       {/* Hero Section */}
@@ -54,7 +54,7 @@ export const LandingSection = ({ onGetStarted }: LandingSectionProps) => {
         <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-200 rounded-full opacity-30"></div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="mb-10 animate-fade-in-up">
+          <div className="mb-10 animate-fade-in">
             <span className="inline-block bg-blue-100 text-blue-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
               Streamline Your Workflow
             </span>
@@ -126,7 +126,7 @@ export const LandingSection = ({ onGetStarted }: LandingSectionProps) => {
       {/* Features Section */}
       <div id="features-section" className="py-24 px-4 bg-white relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className={`text-center mb-16 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"}`}>
+          <div className={`text-center mb-16 ${isVisible.features ? "animate-fade-in" : "opacity-0"}`}>
             <span className="inline-block bg-indigo-100 text-indigo-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
               Powerful Features
             </span>
@@ -136,7 +136,7 @@ export const LandingSection = ({ onGetStarted }: LandingSectionProps) => {
             </p>
           </div>
           <div
-            className={`grid md:grid-cols-2 lg:grid-cols-4 gap-8 ${isVisible.features ? "animate-fade-in-stagger" : "opacity-0"}`}
+            className={`grid md:grid-cols-2 lg:grid-cols-4 gap-8 ${isVisible.features ? "animate-fade-in" : "opacity-0"}`}
           >
             <Card className="border-0 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:transform hover:translate-y-[-8px] bg-gradient-to-b from-white to-blue-50 overflow-hidden group">
               <div className="absolute right-0 top-0 h-20 w-20 bg-blue-100 rounded-bl-full opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
@@ -223,7 +223,7 @@ export const LandingSection = ({ onGetStarted }: LandingSectionProps) => {
         </div>
 
         <div className="max-w-4xl mx-auto text-center">
-          <div className={`mb-8 ${isVisible.example ? "animate-fade-in-up" : "opacity-0"}`}>
+          <div className={`mb-8 ${isVisible.example ? "animate-fade-in" : "opacity-0"}`}>
             <span className="inline-block bg-purple-100 text-purple-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
               Live Demo
             </span>
@@ -290,62 +290,6 @@ export const LandingSection = ({ onGetStarted }: LandingSectionProps) => {
           </div>
         </div>
       </div>
-
-      {/* CSS for animations */}
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 1s ease-out forwards;
-        }
-        .animate-fade-in {
-          animation: fadeIn 1s ease-out forwards;
-        }
-        .animate-fade-in-stagger > * {
-          opacity: 0;
-          animation: fadeInUp 0.5s ease-out forwards;
-        }
-        .animate-fade-in-stagger > *:nth-child(1) { animation-delay: 0.1s; }
-        .animate-fade-in-stagger > *:nth-child(2) { animation-delay: 0.2s; }
-        .animate-fade-in-stagger > *:nth-child(3) { animation-delay: 0.3s; }
-        .animate-fade-in-stagger > *:nth-child(4) { animation-delay: 0.4s; }
-        
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
     </div>
   )
 }

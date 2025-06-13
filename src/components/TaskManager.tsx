@@ -43,6 +43,7 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
     const newTask: Task = {
       id: Date.now().toString(),
       ...parsedTask,
+      completed: false,
       createdAt: new Date()
     };
     
@@ -64,7 +65,9 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
   };
 
   const handleCompleteTask = (id: string) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    setTasks(tasks.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -72,6 +75,10 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
       handleAddTask();
     }
   };
+
+  // Separate completed and active tasks
+  const activeTasks = tasks.filter(task => !task.completed);
+  const completedTasks = tasks.filter(task => task.completed);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,7 +114,7 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
               {/* Main Input */}
               <div className="flex space-x-4">
                 <Input
-                  placeholder='Try: "Finish landing page by 11pm 20th June P1" or "Call client tomorrow 5pm"'
+                  placeholder='Try: "Finish landing page by 11pm 20th June P1" or "Call client tomorrow 5pm" (Default: P3)'
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -207,35 +214,59 @@ export const TaskManager = ({ onBack }: TaskManagerProps) => {
               )}
 
               <p className="text-sm text-gray-500">
-                Natural language examples: "Review proposal John by Friday", "Team meeting everyone tomorrow 2pm P1"
+                Natural language examples: "Review proposal John by Friday P1", "Team meeting everyone tomorrow 2pm" (Default priority: P3)
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Tasks Grid */}
-        {tasks.length === 0 ? (
+        {/* Active Tasks Section */}
+        {activeTasks.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Active Tasks ({activeTasks.length})</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {activeTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onUpdate={handleUpdateTask}
+                  onDelete={handleDeleteTask}
+                  onComplete={handleCompleteTask}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Completed Tasks Section */}
+        {completedTasks.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-600 mb-4">Completed Tasks ({completedTasks.length})</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {completedTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onUpdate={handleUpdateTask}
+                  onDelete={handleDeleteTask}
+                  onComplete={handleCompleteTask}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {tasks.length === 0 && (
           <Card className="text-center py-12 shadow-lg border-0">
             <CardContent>
               <div className="text-gray-400 mb-4">
                 <Plus className="w-16 h-16 mx-auto mb-4 opacity-50" />
               </div>
               <h3 className="text-xl font-semibold text-gray-600 mb-2">No tasks yet</h3>
-              <p className="text-gray-500">Add your first task using natural language above!</p>
+              <p className="text-gray-500">Add your first task using natural language above! (Default priority: P3)</p>
             </CardContent>
           </Card>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onUpdate={handleUpdateTask}
-                onDelete={handleDeleteTask}
-                onComplete={handleCompleteTask}
-              />
-            ))}
-          </div>
         )}
       </div>
     </div>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Calendar, User, Clock, CheckCircle, Trash2 } from 'lucide-react';
+import { Edit, Calendar, User, Clock, CheckCircle, Trash2, RotateCcw } from 'lucide-react';
 import { Task } from '@/types/task';
 
 interface TaskCardProps {
@@ -52,17 +52,27 @@ export const TaskCard = ({ task, onUpdate, onDelete, onComplete }: TaskCardProps
   };
 
   return (
-    <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border-0 hover:-translate-y-1">
+    <Card className={`shadow-lg hover:shadow-xl transition-all duration-300 border-0 hover:-translate-y-1 ${
+      task.completed ? 'opacity-75 bg-gray-50' : ''
+    }`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <Badge className={`${getPriorityColor(task.priority)} px-3 py-1 text-xs font-semibold`}>
-            {task.priority}
-          </Badge>
+          <div className="flex items-center space-x-2">
+            <Badge className={`${getPriorityColor(task.priority)} px-3 py-1 text-xs font-semibold`}>
+              {task.priority}
+            </Badge>
+            {task.completed && (
+              <Badge className="bg-green-100 text-green-800 border-green-200 px-3 py-1 text-xs font-semibold">
+                Completed
+              </Badge>
+            )}
+          </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsEditing(!isEditing)}
             className="p-1 h-8 w-8"
+            disabled={task.completed}
           >
             <Edit className="w-4 h-4" />
           </Button>
@@ -126,7 +136,7 @@ export const TaskCard = ({ task, onUpdate, onDelete, onComplete }: TaskCardProps
                 <SelectContent>
                   <SelectItem value="P1">P1 - Urgent</SelectItem>
                   <SelectItem value="P2">P2 - High</SelectItem>
-                  <SelectItem value="P3">P3 - Medium</SelectItem>
+                  <SelectItem value="P3">P3 - Medium (Default)</SelectItem>
                   <SelectItem value="P4">P4 - Low</SelectItem>
                 </SelectContent>
               </Select>
@@ -144,7 +154,9 @@ export const TaskCard = ({ task, onUpdate, onDelete, onComplete }: TaskCardProps
         ) : (
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold text-lg text-gray-900 leading-tight">
+              <h3 className={`font-semibold text-lg leading-tight ${
+                task.completed ? 'text-gray-600 line-through' : 'text-gray-900'
+              }`}>
                 {task.title}
               </h3>
             </div>
@@ -184,10 +196,23 @@ export const TaskCard = ({ task, onUpdate, onDelete, onComplete }: TaskCardProps
                 variant="ghost"
                 size="sm"
                 onClick={handleComplete}
-                className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                className={
+                  task.completed 
+                    ? "text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                    : "text-green-600 hover:text-green-700 hover:bg-green-50"
+                }
               >
-                <CheckCircle className="w-4 h-4 mr-1" />
-                Complete
+                {task.completed ? (
+                  <>
+                    <RotateCcw className="w-4 h-4 mr-1" />
+                    Reopen
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                    Complete
+                  </>
+                )}
               </Button>
             </div>
           </div>
